@@ -41,4 +41,11 @@ public class PlayerController {
         playerService.deletePlayer(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{id}/country-fn")
+    public ResponseEntity<String> updateCountryusingFUnction(@PathVariable Long id, @RequestParam String country){
+        Integer rowsChanged = playerService.updateCountryViaFunction(id, country);
+        return ResponseEntity.ok("Success! Rows updated: " + rowsChanged);
+    }
+
 }

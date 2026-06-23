@@ -79,4 +79,12 @@ public class PlayerService {
 
         playerRepository.delete(player);
     }
+
+    public Integer updateCountryViaFunction(Long id, String country){
+        if (!playerRepository.existsById(id)) {
+            throw new RuntimeException("Player with id \" + id + \" not found");
+        }
+
+        return playerRepository.callUpdateCountryFunction(id,country);
+    }
 }
