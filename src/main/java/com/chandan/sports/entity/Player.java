@@ -1,9 +1,6 @@
 package com.chandan.sports.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -16,7 +13,11 @@ public class Player {
     @NotBlank(message = "Name is required")
     private String name;
 
-    private String Sport;
+    @ManyToOne
+    @JoinColumn(name = "sport_id", nullable = false) // Creates 'sport_id' column in the player table
+    private Sport sport;
 
     private String speciality;
+
+    private String country;
 }
