@@ -1,12 +1,19 @@
 package com.chandan.sports.service;
 
-import com.chandan.sports.dto.response.AuthResponse;
 import com.chandan.sports.config.JwtService;
 import com.chandan.sports.dto.response.AuthResponse;
 import com.chandan.sports.dto.request.RegisterRequest;
+import com.chandan.sports.entity.BlacklistedToken;
 import com.chandan.sports.entity.Role;
 import com.chandan.sports.entity.User;
+import com.chandan.sports.repository.TokenBlacklistRepository;
 import com.chandan.sports.repository.UserRepository;
+
+import io.jsonwebtoken.Claims;
+
+import java.util.Date;
+import java.time.LocalDateTime;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,7 +22,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
 
-    private final AuthResponse authResponse;
+    private final TokenBlacklistRepository tokenBlacklistRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -24,12 +31,12 @@ public class AuthService {
     public AuthService(UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             JwtService jwtService,
-            AuthenticationManager authenticationManager, AuthResponse authResponse) {
+            AuthenticationManager authenticationManager, TokenBlacklistRepository tokenBlacklistRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
-        this.authResponse = authResponse;
+        this.tokenBlacklistRepository = tokenBlacklistRepository;
     }
 
     public AuthResponse register(RegisterRequest request) {
@@ -45,8 +52,8 @@ public class AuthService {
 
         userRepository.save(user);
 
-        String jwtToken = jwtService.generateToken(user.getUsername());
-        return new AuthResponse(jwtToken);
+        // String jwtToken = jwtService.generateToken(user.getUsername());
+        return new AuthResponse("User registered successfully");
     }
 
     public AuthResponse login(RegisterRequest request) {
@@ -61,4 +68,18 @@ public class AuthService {
         String jwtToken = jwtService.generateToken(user.getUsername());
         return new AuthResponse(jwtToken);
     }
+
+    public AuthResponse logout(String token) {
+        Date expiration = jwtService.extractClaim(token, claims -> claims.getExpiration());
+        BlacklistedToken blacklistedToken = BlacklistedToken.builder()
+                .token(token)
+                .blacklistedAt(LocalDateTime.now())
+                .expiresAt(expiration.toInstant()
+                        .atZone(java.time.ZoneId.systemDefault())
+                        .toLocalDateTime())
+                .build();
+        tokenBlacklistRepository.save(blacklistedToken);
+        return new AuthResponse("Logged out successfully");
+    }
+
 }

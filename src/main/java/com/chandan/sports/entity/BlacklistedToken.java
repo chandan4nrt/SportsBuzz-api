@@ -7,21 +7,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
-@Table(name = "sport")
+@Table(name = "blacklisted_token")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Sport {
+public class BlacklistedToken {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true, columnDefinition = "TEXT")
+    private String token;
+
     @Column(nullable = false)
-    private String name;
+    private LocalDateTime blacklistedAt;
+
     @Column(nullable = false)
-    private Integer players;
-    private Boolean isBallNeeded;
+    private LocalDateTime expiresAt;
 }

@@ -2,10 +2,19 @@ package com.chandan.sports.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
+@Table(name = "player")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,7 +23,7 @@ public class Player {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "sport_id", nullable = false) // Creates 'sport_id' column in the player table
+    @JoinColumn(name = "sport_id", nullable = false)
     private Sport sport;
 
     private String speciality;

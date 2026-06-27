@@ -55,3 +55,5 @@ public class DaoAuthenticationProvider
 # Confirm Spring Security version in use
 mvnw dependency:tree -Dincludes=org.springframework.security:spring-security-core
 ```
+
+CMD TO RUN MVN IN CMD - mvnw spring-boot:run
